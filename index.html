@@ -866,7 +866,7 @@
     background:radial-gradient(circle, rgba(255,90,31,0.55), transparent 70%);
     filter:blur(30px);
     animation:pulse 3.2s ease-in-out infinite;
-    z-index:2;
+    z-index:1;
   }
   @keyframes pulse{
     0%,100%{opacity:0.5;transform:scale(1);}
@@ -1273,7 +1273,7 @@
     <div class="spotlight-visual reveal">
       <div class="flame"></div>
       <!-- Rename your photo to black-pork-submarine.jpeg -->
-      <div class="ph-media" style="position:absolute;inset:0;aspect-ratio:auto;border-radius:0;">
+      <div class="ph-media" style="position:absolute;inset:0;aspect-ratio:auto;border-radius:0;z-index:2;">
         <div class="ph-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div>
         <span class="ph-tag">Placeholder 6</span>
         <span class="ph-spec">Black Pork Submarine, dramatic close-up</span>
@@ -1460,10 +1460,15 @@
   // auto-swap: once a real photo with the matching filename exists in /images/,
   // it fades in on top of the placeholder automatically — no HTML editing needed.
   document.querySelectorAll('img.auto-img').forEach(img=>{
-    img.addEventListener('load', ()=>{
-      if(img.naturalWidth > 1){ img.style.opacity = '1'; }
-    });
+    function reveal(){
+      if(img.complete){
+        if(img.naturalWidth > 0){ img.style.opacity = '1'; }
+        else{ img.style.display = 'none'; }
+      }
+    }
+    img.addEventListener('load', reveal);
     img.addEventListener('error', ()=>{ img.style.display = 'none'; });
+    reveal(); // covers images that finished loading from cache before this ran
   });
 
   // menu horizontal scroller controls
